@@ -1,0 +1,5 @@
+{
+  "name": "BrandFrame Studio",
+  "description": "An AI-powered storyboard generator that takes brand assets and a story description to create a complete marketing storyboard with scripts, visual frames, and video prompts.",
+  "requestFramePermissions": []
+}

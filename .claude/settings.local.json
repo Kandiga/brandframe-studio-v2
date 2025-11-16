@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm run dev:full:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill //F //PID 17972)",
+      "Bash(taskkill:*)",
+      "Bash(timeout /t 5)",
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm install:*)",
+      "Bash(del serverindex.js)",
+      "Bash(npm run server:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
