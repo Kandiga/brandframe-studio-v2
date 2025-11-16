@@ -1,14 +1,21 @@
 [build]
-  # Build command for Netlify
   command = "npm run build"
-  # Directory to publish
   publish = "dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
 
 # Environment variables should be set in Netlify dashboard:
-# - VITE_API_URL: Your backend API URL (e.g., https://your-backend.herokuapp.com or https://your-backend.railway.app)
-# - Any other environment variables your app needs
+# - GEMINI_API_KEY or API_KEY: Your Google Gemini API key
 
-# Redirect all routes to index.html for SPA routing
+# Redirect API calls to Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Redirect all other routes to index.html for SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
