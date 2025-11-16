@@ -3,8 +3,23 @@
  */
 
 // API Configuration
+// In production on Netlify, use relative paths (empty string) to hit Netlify Functions
+// In development, use localhost backend
+// If VITE_API_URL is explicitly set, use it (for custom backend deployments)
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // In production (Netlify), use relative paths
+  if (import.meta.env.PROD) {
+    return '';
+  }
+  // In development, use localhost
+  return 'http://localhost:3002';
+};
+
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:3002',
+  BASE_URL: getApiBaseUrl(),
   TIMEOUT: 300000, // 5 minutes (300 seconds) - Story generation takes ~2-3 minutes
   RETRY_ATTEMPTS: 3,
 } as const;
