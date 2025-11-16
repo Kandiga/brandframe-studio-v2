@@ -1,27 +1,17 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  functions = "netlify/functions"
 
-[functions]
-  node_bundler = "esbuild"
+# This app uses Supabase for all backend operations
+# No Netlify Functions needed
 
-# Environment variables should be set in Netlify dashboard:
-# - GEMINI_API_KEY or API_KEY: Your Google Gemini API key
-
-# Redirect API calls to Netlify Functions
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-
-# Redirect all other routes to index.html for SPA routing
+# SPA routing - redirect all routes to index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Headers for security and CORS
+# Security headers
 [[headers]]
   for = "/*"
   [headers.values]

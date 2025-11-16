@@ -51,16 +51,12 @@ That's it! The app will connect to Supabase Edge Functions automatically.
 
 ## Deployment
 
-### Netlify-Only Deployment (Recommended for Simple Setup)
-👉 **[Follow the Netlify Setup Guide](NETLIFY_SETUP.md)** - Deploy everything on Netlify using Netlify Functions.
+This app uses Supabase for backend operations, so you only need to deploy the frontend.
 
-**Important:** Netlify Functions have timeout limits (10s free, 26s Pro). For longer operations, consider separate backend deployment.
+👉 **[Follow the Deployment Guide](DEPLOYMENT.md)** - Complete guide for deploying to Netlify with Supabase.
 
-### Separate Backend Deployment (Recommended for Production)
-👉 **[Follow the Quick Start Guide](DEPLOY_QUICK_START.md)** - Deploy backend to Railway and frontend to Netlify for better performance.
-
-### Detailed Guides
-- [NETLIFY_SETUP.md](NETLIFY_SETUP.md) - Netlify-only deployment guide
-- [DEPLOYMENT.md](DEPLOYMENT.md) - Comprehensive deployment guide
-- [RAILWAY_DEPLOY.md](RAILWAY_DEPLOY.md) - Detailed Railway deployment
-- [RENDER_DEPLOY.md](RENDER_DEPLOY.md) - Alternative: Render deployment
+**Key Points:**
+- Frontend hosted on Netlify (or any static host)
+- Backend runs on Supabase Edge Functions (already configured)
+- Database stored in Supabase PostgreSQL
+- No separate backend server needed
