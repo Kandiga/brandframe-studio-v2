@@ -284,9 +284,7 @@ Deno.serve(async (req: Request) => {
       }
 
       imageGenParts.push({
-        text: `Generate a professional cinematic ${aspectRatio} image for: \"${scene.scriptLine}\". ${scene.veoPrompt || scene.sceneContext || ''}
-
-IMPORTANT: Create a CLEAN image with NO TEXT, NO SUBTITLES, NO CAPTIONS, NO WORDS, NO LETTERS in ANY language. The image must be completely free of any textual elements, titles, or written characters. Focus purely on visual storytelling without any on-screen text.`
+        text: `Generate a professional cinematic ${aspectRatio} image for: \"${scene.scriptLine}\". ${scene.veoPrompt || scene.sceneContext || ''}\n\nIMPORTANT: Create a CLEAN image with NO TEXT, NO SUBTITLES, NO CAPTIONS, NO WORDS, NO LETTERS in ANY language. The image must be completely free of any textual elements, titles, or written characters. Focus purely on visual storytelling without any on-screen text.`
       });
 
       const generateFrame = async (): Promise<string> => {
