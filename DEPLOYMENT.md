@@ -29,12 +29,22 @@ The Edge Functions are already deployed and configured in your Supabase project.
 
 ## Step 2: Deploy Frontend to Netlify
 
-### Connect Repository
+### Connect Repository (If Not Already Connected)
+
+If you haven't connected your repository yet:
 
 1. Go to [Netlify Dashboard](https://app.netlify.com)
 2. Click "Add new site" → "Import an existing project"
 3. Connect your GitHub repository
 4. Select your repository
+
+### Reconnect to Netlify (If Already Connected via Bolt)
+
+If Bolt already connected your project to Netlify, you can access it directly:
+
+1. Go to [Netlify Dashboard](https://app.netlify.com)
+2. Find your site in the sites list
+3. Click on the site to access its settings
 
 ### Configure Build Settings
 
@@ -42,20 +52,41 @@ Netlify will auto-detect settings from `netlify.toml`:
 - **Build command**: `npm run build`
 - **Publish directory**: `dist`
 
-### Set Environment Variables
+If the settings are not auto-detected, set them manually:
+1. Go to Site settings → Build & deploy → Build settings
+2. Set **Build command**: `npm run build`
+3. Set **Publish directory**: `dist`
 
-In Netlify Dashboard → Site settings → Environment variables, add:
+### Set Environment Variables (CRITICAL STEP)
 
-```
-VITE_SUPABASE_URL=https://ykdlyaxpqxsmajclmput.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZGx5YXhwcXhzbWFqY2xtcHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyNzg4MjAsImV4cCI6MjA3ODg1NDgyMH0.jUmdLgyXG_RX0ZhtYJTBUwipldz22vFH6l010BwSLUY
-```
+**IMPORTANT**: These environment variables MUST be set in Netlify for the app to work.
 
-### Deploy
+1. Go to your site in Netlify Dashboard
+2. Navigate to **Site settings** → **Environment variables**
+3. Click **Add a variable** and add both variables:
 
+**Variable 1:**
+- Key: `VITE_SUPABASE_URL`
+- Value: `https://ykdlyaxpqxsmajclmput.supabase.co`
+
+**Variable 2:**
+- Key: `VITE_SUPABASE_ANON_KEY`
+- Value: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZGx5YXhwcXhzbWFqY2xtcHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyNzg4MjAsImV4cCI6MjA3ODg1NDgyMH0.jUmdLgyXG_RX0ZhtYJTBUwipldz22vFH6l010BwSLUY`
+
+4. Click **Save**
+
+### Deploy or Redeploy
+
+**If this is a new site:**
 1. Click "Deploy site"
 2. Wait for the build to complete
-3. Your site will be available at `https://your-site-name.netlify.app`
+
+**If the site already exists (was connected by Bolt):**
+1. Go to **Deploys** tab
+2. Click **Trigger deploy** → **Clear cache and deploy site**
+3. Wait for the build to complete
+
+Your site will be available at `https://your-site-name.netlify.app`
 
 ## Step 3: Verify Deployment
 
