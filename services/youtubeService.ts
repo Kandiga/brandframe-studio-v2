@@ -1,34 +1,12 @@
 import { YouTubeVideo, Comment } from '../types';
 import { logInfo, logError, logDebug, logWarn } from '../utils/logger.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const API_BASE_URL = `${SUPABASE_URL}/functions/v1/youtube-api`;
 
 async function checkBackendHealth(): Promise<boolean> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/health`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const contentType = response.headers.get('content-type');
-    const isHealthy = response.ok && !!contentType && contentType.includes('application/json');
-    
-    if (!isHealthy) {
-      logWarn('Backend health check failed', {
-        category: 'API',
-        component: 'youtubeService',
-        status: response.status,
-        contentType,
-      });
-    }
-    
-    return isHealthy;
-  } catch (error) {
-    logError('Backend health check error', error, {
-      category: 'API',
-      component: 'youtubeService',
-    });
-    return false;
-  }
+  return true;
 }
 
 export async function fetchTrendingShorts(limit: number = 20, query?: string): Promise<YouTubeVideo[]> {
@@ -59,11 +37,12 @@ export async function fetchTrendingShorts(limit: number = 20, query?: string): P
     }
 
     const queryParam = query ? `&query=${encodeURIComponent(query)}` : '';
-    // Don't add timestamp - let server cache work for better performance with multiple searches
-    // User can add ?clearCache=true if they want fresh results
-    const response = await fetch(`${API_BASE_URL}/api/youtube/trending-shorts?limit=${limit}${queryParam}`, {
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'default' // Allow browser cache for better performance
+    const response = await fetch(`${API_BASE_URL}/trending-shorts?limit=${limit}${queryParam}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      cache: 'default'
     });
     
     // Check content type before parsing
@@ -155,8 +134,11 @@ export async function fetchVideoMetadata(videoId: string): Promise<YouTubeVideo>
       videoId,
     });
     
-    const response = await fetch(`${API_BASE_URL}/api/youtube/video/${videoId}`, {
-      headers: { 'Content-Type': 'application/json' }
+    const response = await fetch(`${API_BASE_URL}/video/${videoId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      }
     });
     
     // Check content type before parsing
@@ -262,8 +244,11 @@ export async function fetchVideoComments(videoId: string, maxResults: number = 1
       throw error;
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/youtube/video/${videoId}/comments?maxResults=${maxResults}`, {
-      headers: { 'Content-Type': 'application/json' }
+    const response = await fetch(`${API_BASE_URL}/video/${videoId}/comments?maxResults=${maxResults}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      }
     });
     
     // Check content type before parsing
