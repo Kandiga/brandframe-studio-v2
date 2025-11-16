@@ -57,44 +57,45 @@ export const GenerationProgress: React.FC<GenerationProgressProps> = ({ progress
           </div>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-indigo-600">{progress.progress}%</div>
+          <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+            {progress.progress}%
+          </div>
           {progress.currentScene && progress.totalScenes && (
-            <div className="text-xs text-gray-500">
-              סצנה {progress.currentScene} מתוך {progress.totalScenes}
-            </div>
-          )}
-        </div>
-      </div>
-      
-      <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
-        <div 
-          className="bg-indigo-600 h-3 rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${progress.progress}%` }}
-        />
-      </div>
-      
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center gap-4">
-          {progress.currentFrame && (
-            <div className="text-gray-600">
-              <span className="font-medium">פריים {progress.currentFrame}</span>
-            </div>
-          )}
-          {progress.currentScene && progress.totalScenes && (
-            <div className="text-gray-500">
+            <div className="text-sm text-gray-600 font-medium">
               סצנה {progress.currentScene}/{progress.totalScenes}
             </div>
           )}
         </div>
-        <div className="flex items-center gap-4 text-gray-600">
+      </div>
+      
+      <div className="w-full bg-gray-200 rounded-full h-4 mb-3 overflow-hidden relative">
+        <div
+          className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 h-4 rounded-full transition-all duration-300 ease-out shadow-sm"
+          style={{ width: `${progress.progress}%` }}
+        >
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-xs font-bold text-white drop-shadow-md">{progress.progress}%</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex items-center justify-between text-sm mt-2">
+        <div className="flex items-center gap-3">
+          {progress.currentFrame && (
+            <div className="bg-blue-50 px-3 py-1 rounded-full">
+              <span className="font-semibold text-blue-700">פריים {progress.currentFrame}</span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-4">
           {progress.elapsedTime !== undefined && (
-            <div className="text-xs">
-              <span className="font-medium">זמן שעבר:</span> {formatTime(progress.elapsedTime)}
+            <div className="text-sm text-gray-600">
+              <span className="font-medium">⏱ עבר:</span> <span className="font-semibold text-gray-800">{formatTime(progress.elapsedTime)}</span>
             </div>
           )}
           {progress.estimatedTimeRemaining !== undefined && progress.estimatedTimeRemaining > 0 && (
-            <div className="text-xs text-indigo-600">
-              <span className="font-medium">⏱️ זמן נותר:</span> {formatTime(progress.estimatedTimeRemaining)}
+            <div className="text-sm bg-blue-50 px-3 py-1 rounded-full">
+              <span className="font-medium text-blue-600">⏳ נותר:</span> <span className="font-bold text-blue-800">{formatTime(progress.estimatedTimeRemaining)}</span>
             </div>
           )}
         </div>

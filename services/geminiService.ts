@@ -125,8 +125,20 @@ export const generateStoryboard = async (
     aspectRatio,
   });
   
+  // Calculate progress weights based on frame count
+  const sceneCount = frameCount / 2;
+  const totalFrames = frameCount;
+
+  const progressWeights = {
+    storyWorld: 10,
+    script: 15,
+    images: 75
+  };
+
+  const imageProgressPerFrame = progressWeights.images / totalFrames;
+
   // Update progress immediately
-  onProgress?.({ phase: 'story-world', progress: 5, message: 'Connecting to server...' });
+  onProgress?.({ phase: 'story-world', progress: 5, message: 'מתחבר לשרת...' });
 
   time('storyboard-api-call');
 
@@ -193,10 +205,45 @@ export const generateStoryboard = async (
       error: response.error,
       code: response.code,
     });
-    
-    // Simulate progress updates (in real implementation, use WebSocket/SSE)
+
+    // Simulate realistic progress updates based on frame count
     if (onProgress && response.data) {
-      onProgress({ phase: 'complete', progress: 100, message: 'Storyboard generated successfully!' });
+      onProgress({ phase: 'story-world', progress: 10, message: 'יצירת עולם סיפור...' });
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      onProgress({ phase: 'script', progress: 25, message: 'כותב תסריט...' });
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const scenes = response.data.scenes || [];
+      for (let i = 0; i < scenes.length; i++) {
+        const scene = scenes[i];
+
+        // Progress for frame A
+        const frameAProgress = 25 + ((i * 2) * imageProgressPerFrame);
+        onProgress({
+          phase: 'images',
+          progress: Math.round(frameAProgress),
+          message: `יוצר פריים ${i * 2 + 1} מתוך ${totalFrames}...`,
+          currentScene: i + 1,
+          totalScenes: sceneCount,
+          currentFrame: 'A'
+        });
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Progress for frame B
+        const frameBProgress = 25 + ((i * 2 + 1) * imageProgressPerFrame);
+        onProgress({
+          phase: 'images',
+          progress: Math.round(frameBProgress),
+          message: `יוצר פריים ${i * 2 + 2} מתוך ${totalFrames}...`,
+          currentScene: i + 1,
+          totalScenes: sceneCount,
+          currentFrame: 'B'
+        });
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      onProgress({ phase: 'complete', progress: 100, message: 'יצירת Storyboard הושלמה בהצלחה!' });
     }
 
     if (!response.success || !response.data) {

@@ -11,9 +11,18 @@ const calculateTimeRemaining = (
   baseEstimatedTime: number
 ): number => {
   if (progress <= 0) return baseEstimatedTime;
+  if (progress >= 100) return 0;
+
+  // Use both progress-based and time-based estimates for more accuracy
   const progressRatio = progress / 100;
-  const estimatedTotal = baseEstimatedTime;
-  const estimatedRemaining = Math.max(0, (estimatedTotal / progressRatio) - elapsedTime);
+
+  // Estimate based on current pace
+  const estimatedTotalFromPace = elapsedTime / progressRatio;
+
+  // Weighted average: 70% based on actual pace, 30% based on initial estimate
+  const estimatedTotal = (estimatedTotalFromPace * 0.7) + (baseEstimatedTime * 0.3);
+
+  const estimatedRemaining = Math.max(0, estimatedTotal - elapsedTime);
   return Math.round(estimatedRemaining);
 };
 
@@ -68,12 +77,12 @@ export function useStoryboard(options: UseStoryboardOptions = {}) {
     setStoryboard(null);
     const generationStartTime = Date.now();
     
-    // Estimate time based on frame count
+    // Estimate time based on frame count with more accurate calculations
     const sceneCount = frameCount / 2;
-    const baseStoryWorldTime = 15; // seconds
-    const scriptTimePerScene = 20; // seconds per scene
-    const imageTimePerFrame = 30; // seconds per frame
-    const totalEstimatedTime = baseStoryWorldTime + (scriptTimePerScene * sceneCount) + (imageTimePerFrame * sceneCount * 2);
+    const baseStoryWorldTime = 10; // seconds for story world architecture
+    const scriptTimePerScene = 15; // seconds per scene for script generation
+    const imageTimePerFrame = 25; // seconds per frame for AI image generation
+    const totalEstimatedTime = baseStoryWorldTime + (scriptTimePerScene * sceneCount) + (imageTimePerFrame * frameCount);
     
     progressStartTimeRef.current = generationStartTime;
     
