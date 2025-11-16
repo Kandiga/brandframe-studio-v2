@@ -38,11 +38,17 @@ The YouTube scraping backend server runs on port 3002 by default. You can config
 
 ## Deployment
 
-For production deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+### Quick Start (Recommended)
+👉 **[Follow the Quick Start Guide](DEPLOY_QUICK_START.md)** - Step-by-step instructions to deploy backend to Railway and configure Netlify.
 
-Quick steps:
-1. Deploy frontend to Netlify (or similar platform)
-2. Deploy backend to Railway/Heroku/Render (or similar platform)
-3. Set `VITE_API_URL` environment variable in frontend deployment
-4. Set `FRONTEND_URL` and other environment variables in backend deployment
-5. Ensure CORS is properly configured (see DEPLOYMENT.md for details)
+### Detailed Guides
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Comprehensive deployment guide
+- [RAILWAY_DEPLOY.md](RAILWAY_DEPLOY.md) - Detailed Railway deployment
+- [RENDER_DEPLOY.md](RENDER_DEPLOY.md) - Alternative: Render deployment
+
+### Quick Overview
+1. Deploy frontend to Netlify (already done ✅)
+2. Deploy backend to Railway (see [DEPLOY_QUICK_START.md](DEPLOY_QUICK_START.md))
+3. Set `VITE_API_URL` environment variable in Netlify
+4. Set `FRONTEND_URL` and `GEMINI_API_KEY` in Railway
+5. Redeploy Netlify to pick up the new environment variable
