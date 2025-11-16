@@ -1,9 +1,7 @@
 import { YouTubeVideo, Comment } from '../types';
 import { logInfo, logError, logDebug, logWarn } from '../utils/logger.js';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const API_BASE_URL = `${SUPABASE_URL}/functions/v1/youtube-api`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
 
 async function checkBackendHealth(): Promise<boolean> {
   return true;
@@ -37,10 +35,9 @@ export async function fetchTrendingShorts(limit: number = 20, query?: string): P
     }
 
     const queryParam = query ? `&query=${encodeURIComponent(query)}` : '';
-    const response = await fetch(`${API_BASE_URL}/trending-shorts?limit=${limit}${queryParam}`, {
+    const response = await fetch(`${API_BASE_URL}/api/youtube/trending-shorts?limit=${limit}${queryParam}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
       },
       cache: 'default'
     });
@@ -134,10 +131,9 @@ export async function fetchVideoMetadata(videoId: string): Promise<YouTubeVideo>
       videoId,
     });
     
-    const response = await fetch(`${API_BASE_URL}/video/${videoId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/youtube/video/${videoId}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
       }
     });
     
@@ -244,10 +240,9 @@ export async function fetchVideoComments(videoId: string, maxResults: number = 1
       throw error;
     }
 
-    const response = await fetch(`${API_BASE_URL}/video/${videoId}/comments?maxResults=${maxResults}`, {
+    const response = await fetch(`${API_BASE_URL}/api/youtube/video/${videoId}/comments?maxResults=${maxResults}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
       }
     });
     

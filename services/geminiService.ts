@@ -130,34 +130,16 @@ export const generateStoryboard = async (
   time('storyboard-api-call');
   
   try {
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-    const apiResponse = await fetch(`${SUPABASE_URL}/functions/v1/gemini-storyboard`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({
-        logoAsset,
-        mainCharacterAsset: characterAsset,
-        additionalCharacterAssets: additionalCharacterAssets.filter(Boolean),
-        backgroundAsset,
-        artStyleAsset,
-        story,
-        aspectRatio,
-        frameCount,
-      }),
+    const response = await apiClient.post<Storyboard>('/api/storyboard/generate', {
+      logoAsset,
+      mainCharacterAsset: characterAsset,
+      additionalCharacterAssets: additionalCharacterAssets.filter(Boolean),
+      backgroundAsset,
+      artStyleAsset,
+      story,
+      aspectRatio,
+      frameCount,
     });
-
-    const responseData = await apiResponse.json();
-    const response = {
-      success: responseData.success,
-      data: responseData.data,
-      error: responseData.error,
-      code: apiResponse.status,
-    };
     
     const apiCallDuration = Date.now() - startTime;
     timeEnd('storyboard-api-call', {
@@ -305,35 +287,16 @@ export const continueStoryboard = async (
   time('continue-storyboard-api-call');
   
   try {
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-    const apiResponse = await fetch(`${SUPABASE_URL}/functions/v1/gemini-storyboard`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({
-        logoAsset,
-        mainCharacterAsset: characterAsset,
-        additionalCharacterAssets: additionalCharacterAssets.filter(Boolean),
-        backgroundAsset,
-        artStyleAsset,
-        existingStoryboard,
-        aspectRatio,
-        customInstruction,
-        continue: true,
-      }),
+    const response = await apiClient.post<{ scenes: Scene[] }>('/api/storyboard/continue', {
+      logoAsset,
+      mainCharacterAsset: characterAsset,
+      additionalCharacterAssets: additionalCharacterAssets.filter(Boolean),
+      backgroundAsset,
+      artStyleAsset,
+      existingStoryboard,
+      aspectRatio,
+      customInstruction,
     });
-
-    const responseData = await apiResponse.json();
-    const response = {
-      success: responseData.success,
-      data: responseData.data,
-      error: responseData.error,
-      code: apiResponse.status,
-    };
     
     const apiCallDuration = Date.now() - startTime;
     timeEnd('continue-storyboard-api-call', {

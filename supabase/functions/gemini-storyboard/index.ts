@@ -30,7 +30,20 @@ Deno.serve(async (req: Request) => {
   try {
     const apiKey = Deno.env.get("GEMINI_API_KEY");
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY not configured");
+      console.error("GEMINI_API_KEY is missing");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "GEMINI_API_KEY not configured. Please add your Gemini API key to Supabase secrets.",
+        }),
+        {
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
 
     const body: StoryboardRequest = await req.json();
