@@ -8,6 +8,7 @@ import MyProjects from './components/MyProjects';
 import ViralShortsView from './components/ViralShortsView';
 import ErrorBoundary from './components/ErrorBoundary';
 import StoryboardWizard, { WizardFormData } from './components/StoryboardWizard';
+import MobileGenerationScreen from './components/MobileGenerationScreen';
 import { useDrafts, StoryboardDraft } from './hooks/useDrafts';
 import { ActiveTab, YouTubeVideo, Scene, Frame } from './types';
 import { useProjects } from './hooks/useProjects';
@@ -18,7 +19,7 @@ import { saveProjectImages } from './utils/fileSystem';
 import { logInfo, logError, logWarn } from './utils/logger.js';
 import { setupGlobalErrorHandlers } from './utils/errorReporter.js';
 
-type View = 'dashboard' | 'my-projects' | 'viral-shorts';
+type View = 'dashboard' | 'my-projects' | 'viral-shorts' | 'mobile-generation';
 
 function App() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -42,6 +43,17 @@ function App() {
   const [saveMessage, setSaveMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [showWizard, setShowWizard] = useState(false);
+  const [mobileWizardData, setMobileWizardData] = useState<WizardFormData | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   const [showDraftRecoveryModal, setShowDraftRecoveryModal] = useState(false);
   const [recoveryDraft, setRecoveryDraft] = useState<StoryboardDraft | null>(null);
   const { drafts, loadDraft, deleteDraft } = useDrafts();
@@ -231,10 +243,45 @@ function App() {
     setAspectRatio(wizardData.aspectRatio);
     setFrameCount(wizardData.frameCount);
 
-    setTimeout(() => {
-      handleGenerate();
-    }, 100);
+    if (isMobile) {
+      setMobileWizardData(wizardData);
+      setCurrentView('mobile-generation');
+      setShowWizard(false);
+    } else {
+      setTimeout(() => {
+        handleGenerate();
+      }, 100);
+    }
+  }, [handleGenerate, isMobile, setCurrentView]);
+
+  const handleMobileGenerate = useCallback((wizardData: WizardFormData) => {
+    setLogoFile(wizardData.logoFile);
+    setCharacterFile(wizardData.characterFile);
+    setBackgroundFile(wizardData.backgroundFile);
+    setArtStyleFile(wizardData.artStyleFile);
+    setCharacterFiles(wizardData.characterFiles);
+    setLogoPreview(wizardData.logoPreview);
+    setCharacterPreview(wizardData.characterPreview);
+    setBackgroundPreview(wizardData.backgroundPreview);
+    setArtStylePreview(wizardData.artStylePreview);
+    setCharacterPreviews(wizardData.characterPreviews);
+    setStoryDescription(wizardData.storyDescription);
+    setAspectRatio(wizardData.aspectRatio);
+    setFrameCount(wizardData.frameCount);
+    handleGenerate();
   }, [handleGenerate]);
+
+  const handleBackToDashboard = useCallback(() => {
+    setCurrentView('dashboard');
+    setMobileWizardData(null);
+  }, [setCurrentView]);
+
+  const handleNewStoryFromMobile = useCallback(() => {
+    setStoryboardData(null);
+    setMobileWizardData(null);
+    setShowWizard(true);
+    setCurrentView('dashboard');
+  }, [setStoryboardData, setCurrentView]);
 
   const handleResumeDraft = useCallback(async () => {
     if (!recoveryDraft) return;
@@ -778,10 +825,23 @@ BOUNDARIES & LOGIC:
             )}
           </>
         ) : currentView === 'my-projects' ? (
-          <MyProjects 
+          <MyProjects
             projects={savedProjects}
             onLoad={handleLoadProject}
             onDelete={handleDeleteProject}
+          />
+        ) : currentView === 'mobile-generation' && mobileWizardData ? (
+          <MobileGenerationScreen
+            wizardData={mobileWizardData}
+            onGenerate={handleMobileGenerate}
+            isLoading={isLoading}
+            progress={progress}
+            storyboard={storyboardData}
+            onBackToDashboard={handleBackToDashboard}
+            onNewStory={handleNewStoryFromMobile}
+            onContinueNarrative={handleContinueNarrative}
+            onExport={handleExport}
+            onSave={handleSaveProject}
           />
         ) : (
           <ViralShortsView onVideoSelect={handleVideoSelect} />
