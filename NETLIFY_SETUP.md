@@ -19,17 +19,31 @@ Storyboard generation can take 2-3 minutes, which exceeds these limits. For prod
 1. Go to **Netlify Dashboard** → Your site → **Site settings** → **Environment variables**
 2. Add these variables:
 
-   **Required:**
+   **Required - Supabase Configuration:**
+   ```
+   VITE_SUPABASE_URL=https://ykdlyaxpqxsmajclmput.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrZGx5YXhwcXhzbWFqY2xtcHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyNzg4MjAsImV4cCI6MjA3ODg1NDgyMH0.jUmdLgyXG_RX0ZhtYJTBUwipldz22vFH6l010BwSLUY
+   ```
+
+   **Important Notes:**
+   - These environment variables must be added to Netlify for the deployed app to work
+   - The app uses Supabase Edge Functions, not Netlify Functions
+   - The `GEMINI_API_KEY` should be added to Supabase (not Netlify) - see Step 1.5 below
+
+## Step 1.5: Configure Supabase Edge Functions
+
+The app uses Supabase Edge Functions for backend operations. You need to add the API key to Supabase:
+
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard/project/ykdlyaxpqxsmajclmput)
+2. Navigate to **Project Settings** → **Edge Functions** → **Secrets**
+3. Add this secret:
    ```
    GEMINI_API_KEY=your-gemini-api-key-here
    ```
+4. Save the secret
 
-   **Optional** (for YouTube Shorts feature):
-   ```
-   YOUTUBE_API_KEY=your-youtube-api-key-here
-   ```
-
-   **Note:** `VITE_API_URL` is NOT needed anymore - the app will use Netlify Functions automatically.
+**Optional** (for YouTube Shorts feature):
+- Add `YOUTUBE_API_KEY` to Supabase Secrets as well
 
 ## Step 2: Deploy
 
@@ -49,61 +63,59 @@ Storyboard generation can take 2-3 minutes, which exceeds these limits. For prod
 
 ## How It Works
 
-- All API calls to `/api/*` are automatically redirected to `/.netlify/functions/api`
-- The Netlify Function handles all backend logic
-- No separate backend server needed!
+- The frontend is hosted on Netlify
+- Backend operations use Supabase Edge Functions
+- The app connects directly to Supabase from the browser using the Supabase client
+- No Netlify Functions are used in this setup
 
 ## Troubleshooting
 
-### Function Timeout Errors
+### "Supabase configuration is missing" Error
 
-If you see timeout errors during storyboard generation:
+This error appears when the Supabase environment variables are not set in Netlify:
 
-1. **Upgrade to Netlify Pro** for 26-second timeout
-2. **Or use Background Functions** (requires code changes)
-3. **Or deploy backend separately** (see DEPLOYMENT.md)
+1. Go to Netlify Dashboard → Site settings → Environment variables
+2. Make sure both `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set
+3. **Trigger a new deploy** after adding the variables (they don't take effect on existing builds)
+4. Clear browser cache and reload the page
 
-### Function Not Found (404)
+### Storyboard Generation Fails
 
-- Check that `netlify/functions/api.ts` exists
-- Verify `netlify.toml` has `functions = "netlify/functions"`
-- Check build logs for TypeScript compilation errors
+If storyboard generation fails with a server error:
 
-### Environment Variables Not Working
+1. Check that `GEMINI_API_KEY` is added to **Supabase Secrets** (not Netlify)
+2. Go to Supabase Dashboard → Edge Functions → Secrets
+3. Verify the API key is correctly set
 
-- Make sure variables are set in Netlify Dashboard (not in `.env` files)
-- Redeploy after adding new environment variables
-- Check function logs: **Functions** tab → Click on function → View logs
+### Build Fails on Netlify
 
-### CORS Errors
+- Check the build logs in Netlify Dashboard → Deploys → [Latest deploy] → Deploy log
+- Common issues:
+  - Missing dependencies: Make sure `package.json` is committed
+  - TypeScript errors: Run `npm run build` locally to catch errors before deploying
 
-- CORS is handled automatically by Netlify Functions
-- If you see CORS errors, check the function code in `netlify/functions/api.ts`
+### Environment Variables Not Working After Deploy
+
+- Environment variables are baked into the build at build time
+- You must **trigger a new deploy** after changing environment variables
+- Go to: Deploys → Trigger deploy → Clear cache and deploy site
 
 ## Development
 
-For local development with Netlify Functions:
+For local development:
 
-1. Install Netlify CLI:
+1. Make sure `.env` file exists with Supabase configuration
+2. Run the development server:
    ```bash
-   npm install -g netlify-cli
+   npm run dev
    ```
 
-2. Run locally:
-   ```bash
-   netlify dev
-   ```
-
-This will:
-- Start the frontend on `http://localhost:8888`
-- Run Netlify Functions locally
-- Simulate the production environment
+This will start the app on `http://localhost:3000`
 
 ## Production Considerations
 
-- **Free tier**: Limited to 10-second function execution
-- **Pro tier**: 26-second timeout, better for most use cases
-- **Background Functions**: For longer operations (requires Pro+)
-
-For production apps with heavy usage, consider deploying the backend separately on Railway or Render for better performance and no timeout limits.
+Since this app uses Supabase Edge Functions:
+- No timeout limits from Netlify (timeouts are handled by Supabase)
+- Supabase free tier has generous limits for Edge Functions
+- For production apps with heavy usage, consider upgrading your Supabase plan
 
