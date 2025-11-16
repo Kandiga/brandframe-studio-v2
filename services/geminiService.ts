@@ -1,6 +1,7 @@
 import { Storyboard, Scene } from '../types';
 import { apiClient } from '../utils/apiClient.js';
 import { logInfo, logError, logDebug, time, timeEnd } from '../utils/logger.js';
+import { getSupabaseUrl, getSupabaseAnonKey } from '../config/supabase';
 
 // Helper to convert File object to a base64 string with MIME type
 const fileToBase64 = (file: File): Promise<{ mimeType: string, data: string }> => {
@@ -130,12 +131,8 @@ export const generateStoryboard = async (
   time('storyboard-api-call');
 
   try {
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      throw new Error('Supabase configuration is missing. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.');
-    }
+    const SUPABASE_URL = getSupabaseUrl();
+    const SUPABASE_ANON_KEY = getSupabaseAnonKey();
 
     const apiResponse = await fetch(`${SUPABASE_URL}/functions/v1/gemini-storyboard`, {
       method: 'POST',
@@ -327,12 +324,8 @@ export const continueStoryboard = async (
   time('continue-storyboard-api-call');
 
   try {
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      throw new Error('Supabase configuration is missing. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.');
-    }
+    const SUPABASE_URL = getSupabaseUrl();
+    const SUPABASE_ANON_KEY = getSupabaseAnonKey();
 
     const apiResponse = await fetch(`${SUPABASE_URL}/functions/v1/gemini-storyboard`, {
       method: 'POST',

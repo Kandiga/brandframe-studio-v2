@@ -1,9 +1,8 @@
 import { YouTubeVideo, Comment } from '../types';
 import { logInfo, logError, logDebug, logWarn } from '../utils/logger.js';
+import { getSupabaseUrl, getSupabaseAnonKey } from '../config/supabase';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const API_BASE_URL = `${SUPABASE_URL}/functions/v1/youtube-api`;
+const getApiBaseUrl = () => `${getSupabaseUrl()}/functions/v1/youtube-api`;
 
 export async function fetchTrendingShorts(limit: number = 20, query?: string): Promise<YouTubeVideo[]> {
   const startTime = Date.now();
@@ -18,10 +17,10 @@ export async function fetchTrendingShorts(limit: number = 20, query?: string): P
     });
 
     const queryParam = query ? `&query=${encodeURIComponent(query)}` : '';
-    const response = await fetch(`${API_BASE_URL}/trending-shorts?limit=${limit}${queryParam}`, {
+    const response = await fetch(`${getApiBaseUrl()}/trending-shorts?limit=${limit}${queryParam}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${getSupabaseAnonKey()}`,
       },
       cache: 'default'
     });
@@ -32,7 +31,7 @@ export async function fetchTrendingShorts(limit: number = 20, query?: string): P
       await response.text(); // Read response to avoid memory leak
       const error = new Error(
         `Server returned non-JSON response. Backend server may not be running. ` +
-        `Expected JSON from ${API_BASE_URL}/api/youtube/trending-shorts, ` +
+        `Expected JSON from ${getApiBaseUrl()}/api/youtube/trending-shorts, ` +
         `but got: ${contentType || 'unknown'}. ` +
         `Make sure to run "npm run server" or "npm run dev:full".`
       );
@@ -96,7 +95,7 @@ export async function fetchTrendingShorts(limit: number = 20, query?: string): P
     // Re-throw with more context if it's a network error
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error(
-        `Cannot connect to backend server at ${API_BASE_URL}. ` +
+        `Cannot connect to backend server at ${getApiBaseUrl()}. ` +
         `Please make sure the backend server is running with "npm run server" or "npm run dev:full".`
       );
     }
@@ -115,10 +114,10 @@ export async function fetchVideoMetadata(videoId: string): Promise<YouTubeVideo>
       videoId,
     });
     
-    const response = await fetch(`${API_BASE_URL}/video/${videoId}`, {
+    const response = await fetch(`${getApiBaseUrl()}/video/${videoId}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${getSupabaseAnonKey()}`,
       }
     });
     
@@ -189,7 +188,7 @@ export async function fetchVideoMetadata(videoId: string): Promise<YouTubeVideo>
     
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error(
-        `Cannot connect to backend server at ${API_BASE_URL}. ` +
+        `Cannot connect to backend server at ${getApiBaseUrl()}. ` +
         `Please make sure the backend server is running with "npm run server" or "npm run dev:full".`
       );
     }
@@ -209,10 +208,10 @@ export async function fetchVideoComments(videoId: string, maxResults: number = 1
       maxResults,
     });
 
-    const response = await fetch(`${API_BASE_URL}/video/${videoId}/comments?maxResults=${maxResults}`, {
+    const response = await fetch(`${getApiBaseUrl()}/video/${videoId}/comments?maxResults=${maxResults}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${getSupabaseAnonKey()}`,
       }
     });
     
@@ -285,7 +284,7 @@ export async function fetchVideoComments(videoId: string, maxResults: number = 1
     
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error(
-        `Cannot connect to backend server at ${API_BASE_URL}. ` +
+        `Cannot connect to backend server at ${getApiBaseUrl()}. ` +
         `Please make sure the backend server is running with "npm run server" or "npm run dev:full".`
       );
     }
