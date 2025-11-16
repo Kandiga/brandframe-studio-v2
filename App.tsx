@@ -7,6 +7,8 @@ import Dashboard from './components/Dashboard';
 import MyProjects from './components/MyProjects';
 import ViralShortsView from './components/ViralShortsView';
 import ErrorBoundary from './components/ErrorBoundary';
+import StoryboardWizard, { WizardFormData } from './components/StoryboardWizard';
+import { useDrafts, StoryboardDraft } from './hooks/useDrafts';
 import { ActiveTab, YouTubeVideo, Scene, Frame } from './types';
 import { useProjects } from './hooks/useProjects';
 import { useStoryboard } from './hooks/useStoryboard';
@@ -39,6 +41,10 @@ function App() {
   const [currentView, setCurrentViewState] = useState<View>('dashboard');
   const [saveMessage, setSaveMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [showWizard, setShowWizard] = useState(false);
+  const [showDraftRecoveryModal, setShowDraftRecoveryModal] = useState(false);
+  const [recoveryDraft, setRecoveryDraft] = useState<StoryboardDraft | null>(null);
+  const { drafts, loadDraft, deleteDraft } = useDrafts();
   
   // Setup global error handlers on mount
   useEffect(() => {
@@ -48,6 +54,20 @@ function App() {
       component: 'App',
     });
   }, []);
+
+  // Check for incomplete drafts on mount
+  useEffect(() => {
+    if (drafts.length > 0 && !storyboardData) {
+      const latestDraft = drafts[0];
+      setRecoveryDraft(latestDraft);
+      setShowDraftRecoveryModal(true);
+      logInfo('Draft recovery available', {
+        category: 'DRAFT',
+        component: 'App',
+        draftId: latestDraft.id,
+      });
+    }
+  }, [drafts, storyboardData]);
 
   // Use custom hooks
   const { projects: savedProjects, saveProject, deleteProject, loadProject } = useProjects();
@@ -179,14 +199,15 @@ function App() {
   const handleGenerate = useCallback(() => {
     setActiveTab('storyboard');
     setErrorMessage('');
+    setShowWizard(false);
     // Get main character (first in array or single character file)
     const mainCharacter = characterFiles.length > 0 ? characterFiles[0] : characterFile;
     // Get additional characters (rest of array)
     const additionalCharacters = characterFiles.length > 1 ? characterFiles.slice(1) : [];
     generateStoryboard(
-      logoFile, 
-      mainCharacter, 
-      storyDescription, 
+      logoFile,
+      mainCharacter,
+      storyDescription,
       aspectRatio,
       additionalCharacters,
       backgroundFile,
@@ -194,6 +215,98 @@ function App() {
       frameCount
     );
   }, [logoFile, characterFile, characterFiles, storyDescription, aspectRatio, backgroundFile, artStyleFile, frameCount, generateStoryboard]);
+
+  const handleWizardComplete = useCallback((wizardData: WizardFormData) => {
+    setLogoFile(wizardData.logoFile);
+    setCharacterFile(wizardData.characterFile);
+    setBackgroundFile(wizardData.backgroundFile);
+    setArtStyleFile(wizardData.artStyleFile);
+    setCharacterFiles(wizardData.characterFiles);
+    setLogoPreview(wizardData.logoPreview);
+    setCharacterPreview(wizardData.characterPreview);
+    setBackgroundPreview(wizardData.backgroundPreview);
+    setArtStylePreview(wizardData.artStylePreview);
+    setCharacterPreviews(wizardData.characterPreviews);
+    setStoryDescription(wizardData.storyDescription);
+    setAspectRatio(wizardData.aspectRatio);
+    setFrameCount(wizardData.frameCount);
+
+    setTimeout(() => {
+      handleGenerate();
+    }, 100);
+  }, [handleGenerate]);
+
+  const handleResumeDraft = useCallback(async () => {
+    if (!recoveryDraft) return;
+
+    const draft = await loadDraft(recoveryDraft.id);
+    if (!draft) {
+      setShowDraftRecoveryModal(false);
+      setRecoveryDraft(null);
+      return;
+    }
+
+    const base64ToFile = async (base64String: string, filename: string): Promise<File | null> => {
+      if (!base64String) return null;
+      try {
+        const response = await fetch(base64String);
+        const blob = await response.blob();
+        return new File([blob], filename, { type: blob.type });
+      } catch (error) {
+        console.error('Failed to convert base64 to file:', error);
+        return null;
+      }
+    };
+
+    const [logo, character, background, artStyle, ...additionalChars] = await Promise.all([
+      draft.draft_data.logoFile ? base64ToFile(draft.draft_data.logoFile, 'logo') : Promise.resolve(null),
+      draft.draft_data.characterFile ? base64ToFile(draft.draft_data.characterFile, 'character') : Promise.resolve(null),
+      draft.draft_data.backgroundFile ? base64ToFile(draft.draft_data.backgroundFile, 'background') : Promise.resolve(null),
+      draft.draft_data.artStyleFile ? base64ToFile(draft.draft_data.artStyleFile, 'artStyle') : Promise.resolve(null),
+      ...((draft.draft_data.characterFiles || []).map((file, idx) => base64ToFile(file, `character-${idx + 2}`))),
+    ]);
+
+    setLogoFile(logo);
+    setCharacterFile(character);
+    setBackgroundFile(background);
+    setArtStyleFile(artStyle);
+    setLogoPreview(draft.draft_data.logoFile || null);
+    setCharacterPreview(draft.draft_data.characterFile || null);
+    setBackgroundPreview(draft.draft_data.backgroundFile || null);
+    setArtStylePreview(draft.draft_data.artStyleFile || null);
+    setStoryDescription(draft.draft_data.storyDescription);
+    setAspectRatio(draft.draft_data.aspectRatio);
+    setFrameCount(draft.draft_data.frameCount);
+
+    const allCharFiles = [character, ...additionalChars.filter(Boolean)] as File[];
+    const allCharPreviews = [draft.draft_data.characterFile, ...(draft.draft_data.characterFiles || [])].filter(Boolean) as string[];
+    setCharacterFiles(allCharFiles);
+    setCharacterPreviews(allCharPreviews);
+
+    setShowDraftRecoveryModal(false);
+    setShowWizard(true);
+
+    logInfo('Draft resumed', {
+      category: 'DRAFT',
+      component: 'App',
+      draftId: draft.id,
+    });
+  }, [recoveryDraft, loadDraft]);
+
+  const handleDismissDraft = useCallback(() => {
+    setShowDraftRecoveryModal(false);
+    setRecoveryDraft(null);
+  }, []);
+
+  const handleNewStoryboard = useCallback(() => {
+    setShowWizard(true);
+    setStoryboardData(null);
+    logInfo('New storyboard started', {
+      category: 'USER_ACTION',
+      component: 'App',
+      action: 'new-storyboard',
+    });
+  }, [setStoryboardData]);
 
   const handleSaveProject = useCallback(async () => {
     if (!storyboardData) {
@@ -603,8 +716,21 @@ BOUNDARIES & LOGIC:
         <div className="flex-1 flex flex-col lg:flex-row ml-0 lg:ml-64 pb-20 lg:pb-0">
         {currentView === 'dashboard' ? (
           <>
-            <InputPanel
-              onLogoChange={handleLogoChange}
+            {showWizard && !storyboardData ? (
+              <div className="flex-1 lg:hidden">
+                <StoryboardWizard
+                  onComplete={handleWizardComplete}
+                  isGenerating={isLoading}
+                  onDraftSaved={() => {
+                    setSaveMessage('Draft saved successfully!');
+                    setTimeout(() => setSaveMessage(''), 3000);
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="hidden lg:flex">
+                <InputPanel
+                  onLogoChange={handleLogoChange}
               onCharacterChange={handleCharacterChange}
               logoPreview={logoPreview}
               characterPreview={characterPreview}
@@ -624,18 +750,32 @@ BOUNDARIES & LOGIC:
               artStylePreview={artStylePreview}
               characterPreviews={characterPreviews}
               characterFiles={characterFiles}
-            />
-            <Dashboard
-              storyboard={storyboardData}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              onExport={handleExport}
-              onSave={handleSaveProject}
-              onContinueNarrative={handleContinueNarrative}
-              isLoading={isLoading}
-              saveMessage={saveMessage}
-              progress={progress}
-            />
+                />
+              </div>
+            )}
+            {!showWizard && (
+              <Dashboard
+                storyboard={storyboardData}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                onExport={handleExport}
+                onSave={handleSaveProject}
+                onContinueNarrative={handleContinueNarrative}
+                isLoading={isLoading}
+                saveMessage={saveMessage}
+                progress={progress}
+              />
+            )}
+            {!storyboardData && !showWizard && (
+              <div className="flex-1 flex items-center justify-center p-4 lg:hidden">
+                <button
+                  onClick={handleNewStoryboard}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition-all text-lg"
+                >
+                  Create New Storyboard
+                </button>
+              </div>
+            )}
           </>
         ) : currentView === 'my-projects' ? (
           <MyProjects 
@@ -648,6 +788,51 @@ BOUNDARIES & LOGIC:
         )}
         </div>
         <BottomNav currentView={currentView} setCurrentView={setCurrentView} />
+
+        {showDraftRecoveryModal && recoveryDraft && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Resume Your Work?</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                You have an unfinished draft: <strong>{recoveryDraft.title}</strong>
+              </p>
+              <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-3">
+                  {recoveryDraft.thumbnail_url && (
+                    <img
+                      src={recoveryDraft.thumbnail_url}
+                      alt="Draft preview"
+                      className="w-16 h-16 object-cover rounded border"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500">Last updated</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {new Date(recoveryDraft.updated_at).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Step {recoveryDraft.step_position} of 5
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDismissDraft}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50"
+                >
+                  Start Fresh
+                </button>
+                <button
+                  onClick={handleResumeDraft}
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+                >
+                  Resume Draft
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </ErrorBoundary>
   );
