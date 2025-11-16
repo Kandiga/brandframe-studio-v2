@@ -15,7 +15,15 @@ Used for AI-powered storyboard generation.
 1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
 2. Sign in with your Google account
 3. Click "Create API Key"
-4. Copy the key
+4. **IMPORTANT:** When creating the key, you'll be asked to select or create a Google Cloud project
+5. After creating the key, you MUST enable the Generative Language API:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Select the project that was linked to your API key (project ID: 573529931500)
+   - Go to **APIs & Services** → **Library**
+   - Search for "Generative Language API"
+   - Click on it and press **Enable**
+   - Wait 2-3 minutes for the API to activate
+6. Copy the API key
 
 ### 2. YouTube Data API Key
 Used for fetching trending shorts and video information.
