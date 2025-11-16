@@ -133,6 +133,10 @@ export const generateStoryboard = async (
     const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
     const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      throw new Error('Supabase configuration is missing. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.');
+    }
+
     const apiResponse = await fetch(`${SUPABASE_URL}/functions/v1/gemini-storyboard`, {
       method: 'POST',
       headers: {
@@ -150,6 +154,24 @@ export const generateStoryboard = async (
         frameCount,
       }),
     });
+
+    const contentType = apiResponse.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const textResponse = await apiResponse.text();
+      logError('Non-JSON response from API', new Error('Invalid response format'), {
+        category: 'GENERATION',
+        component: 'geminiService',
+        contentType,
+        responsePreview: textResponse.substring(0, 200),
+        status: apiResponse.status,
+      });
+
+      if (apiResponse.status === 500) {
+        throw new Error('Server error: The GEMINI_API_KEY is not configured in Supabase. Please add your Gemini API key to Supabase Project Settings > Edge Functions > Secrets.');
+      }
+
+      throw new Error(`API returned invalid response (${apiResponse.status}). Expected JSON but received ${contentType || 'unknown'}. Please check your Supabase Edge Function configuration.`);
+    }
 
     const responseData = await apiResponse.json();
     const response = {
@@ -308,6 +330,10 @@ export const continueStoryboard = async (
     const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
     const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      throw new Error('Supabase configuration is missing. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.');
+    }
+
     const apiResponse = await fetch(`${SUPABASE_URL}/functions/v1/gemini-storyboard`, {
       method: 'POST',
       headers: {
@@ -326,6 +352,24 @@ export const continueStoryboard = async (
         continue: true,
       }),
     });
+
+    const contentType = apiResponse.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const textResponse = await apiResponse.text();
+      logError('Non-JSON response from API', new Error('Invalid response format'), {
+        category: 'GENERATION',
+        component: 'geminiService',
+        contentType,
+        responsePreview: textResponse.substring(0, 200),
+        status: apiResponse.status,
+      });
+
+      if (apiResponse.status === 500) {
+        throw new Error('Server error: The GEMINI_API_KEY is not configured in Supabase. Please add your Gemini API key to Supabase Project Settings > Edge Functions > Secrets.');
+      }
+
+      throw new Error(`API returned invalid response (${apiResponse.status}). Expected JSON but received ${contentType || 'unknown'}. Please check your Supabase Edge Function configuration.`);
+    }
 
     const responseData = await apiResponse.json();
     const response = {
