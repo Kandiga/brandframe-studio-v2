@@ -33,18 +33,18 @@ const WizardNavigation: React.FC<WizardNavigationProps> = ({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40 lg:hidden">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-300 shadow-2xl z-50 lg:hidden">
       <div
-        className="px-4 py-3 flex items-center justify-between gap-3"
-        style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+        className="px-4 py-4 flex items-center justify-between gap-3"
+        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
       >
         <button
           onClick={onBack}
           disabled={!canGoBack || isGenerating}
-          className={`flex-1 max-w-[100px] py-3 px-4 rounded-lg font-semibold transition-all min-h-[44px] ${
+          className={`flex-1 max-w-[100px] py-3 px-4 rounded-lg font-semibold transition-all min-h-[48px] text-base ${
             canGoBack && !isGenerating
-              ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300'
-              : 'bg-gray-50 text-gray-300 cursor-not-allowed'
+              ? 'bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 shadow-sm'
+              : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
           }`}
         >
           Back
@@ -53,20 +53,20 @@ const WizardNavigation: React.FC<WizardNavigationProps> = ({
         <button
           onClick={onSaveDraft}
           disabled={isGenerating}
-          className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold transition-all min-h-[44px] border-2 border-blue-600 text-blue-600 hover:bg-blue-50 active:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold transition-all min-h-[48px] border-2 border-blue-600 text-blue-600 hover:bg-blue-50 active:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           title="Save your progress"
         >
           <SaveIcon className="w-5 h-5" />
-          <span className="hidden sm:inline">Save Draft</span>
+          <span className="hidden sm:inline">Save</span>
         </button>
 
         <button
           onClick={onNext}
           disabled={!canGoNext || isGenerating}
-          className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all min-h-[44px] flex items-center justify-center gap-2 ${
+          className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all min-h-[48px] flex items-center justify-center gap-2 text-base shadow-md ${
             canGoNext && !isGenerating
               ? 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'
-              : 'bg-blue-300 text-white cursor-not-allowed'
+              : 'bg-blue-300 text-white cursor-not-allowed opacity-60'
           }`}
         >
           {isGenerating && (
