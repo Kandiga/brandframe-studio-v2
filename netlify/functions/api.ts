@@ -7,14 +7,18 @@ import { storyboardGenerationSchema } from '../../server/middleware/validation.j
 import { logInfo, logError, logDebug } from '../../server/utils/logger.js';
 
 // CORS headers helper
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-};
+const getCorsHeaders = (origin?: string) => ({
+  'Access-Control-Allow-Origin': origin || '*',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Credentials': 'true',
+});
 
 // Handle CORS preflight
 const handleCORS = (event: HandlerEvent) => {
+  const origin = event.headers.origin || event.headers.Origin;
+  const corsHeaders = getCorsHeaders(origin);
+
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -26,13 +30,15 @@ const handleCORS = (event: HandlerEvent) => {
 };
 
 // Error handler
-const handleError = (error: unknown, statusCode: number = 500) => {
+const handleError = (error: unknown, statusCode: number = 500, origin?: string) => {
   const message = error instanceof Error ? error.message : 'Unknown error';
   logError('Netlify function error', error instanceof Error ? error : new Error(message), {
     category: 'NETLIFY_FUNCTION',
     statusCode,
   });
-  
+
+  const corsHeaders = getCorsHeaders(origin);
+
   return {
     statusCode,
     headers: {
@@ -53,8 +59,10 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
   const corsResponse = handleCORS(event);
   if (corsResponse) return corsResponse;
 
-  const { path, httpMethod, queryStringParameters, body } = event;
+  const { path, httpMethod, queryStringParameters, body, headers } = event;
   const apiPath = path.replace('/.netlify/functions/api', '');
+  const origin = headers.origin || headers.Origin;
+  const corsHeaders = getCorsHeaders(origin);
 
   logInfo('Netlify function called', {
     category: 'NETLIFY_FUNCTION',
@@ -337,9 +345,9 @@ export const handler: Handler = async (event: HandlerEvent, context: HandlerCont
     };
   } catch (error) {
     if (error instanceof ApplicationError) {
-      return handleError(error, error.statusCode || 500);
+      return handleError(error, error.statusCode || 500, origin);
     }
-    return handleError(error);
+    return handleError(error, 500, origin);
   }
 };
 
