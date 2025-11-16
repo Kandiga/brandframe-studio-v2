@@ -247,7 +247,19 @@ export const generateStoryboard = async (
     }
 
     if (!response.success || !response.data) {
-      const errorMsg = response.error || 'Failed to generate storyboard';
+      let errorMsg = response.error || 'Failed to generate storyboard';
+
+      // Add more context to common errors
+      if (errorMsg.includes('GEMINI_API_KEY')) {
+        errorMsg = `🔑 הגדרת API Key חסרה\n\nיש להוסיף את ה-GEMINI_API_KEY ב-Supabase Dashboard:\nProject Settings → Edge Functions → Secrets\n\nלאחר הוספת המפתח, נסה שוב.`;
+      } else if (response.code === 500) {
+        errorMsg = `❌ שגיאת שרת (500)\n\n${errorMsg}\n\nבדוק את ה-logs ב-Supabase Dashboard → Edge Functions לפרטים נוספים.`;
+      } else if (response.code === 400) {
+        errorMsg = `⚠️ בקשה לא תקינה: ${errorMsg}`;
+      } else if (response.code === 401 || response.code === 403) {
+        errorMsg = `🔒 שגיאת הרשאה: ${errorMsg}\n\nבדוק את ההגדרות של Supabase.`;
+      }
+
       const totalDuration = Date.now() - startTime;
       logError('Backend returned error', new Error(errorMsg), {
         category: 'GENERATION',
@@ -255,6 +267,7 @@ export const generateStoryboard = async (
         action: 'generate',
         duration: `${totalDuration}ms`,
         errorCode: response.code,
+        originalError: response.error,
       });
       throw new Error(errorMsg);
     }

@@ -730,10 +730,10 @@ BOUNDARIES & LOGIC:
     <ErrorBoundary>
       <div className="bg-gray-50 min-h-screen flex text-gray-800">
         {errorMessage && (
-          <div className="fixed top-4 right-4 left-4 lg:left-auto bg-red-50 border border-red-200 rounded-lg shadow-lg p-4 z-50 w-full lg:max-w-md">
+          <div className="fixed top-4 right-4 left-4 lg:left-auto bg-red-50 border-2 border-red-300 rounded-lg shadow-lg p-5 z-50 w-full lg:max-w-lg">
             <div className="flex items-start gap-3">
               <svg
-                className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -746,13 +746,14 @@ BOUNDARIES & LOGIC:
                 />
               </svg>
               <div className="flex-1">
-                <p className="text-sm text-red-800">{errorMessage}</p>
+                <h3 className="font-semibold text-red-900 mb-2">שגיאה ביצירת הסיפור</h3>
+                <p className="text-sm text-red-800 whitespace-pre-line leading-relaxed">{errorMessage}</p>
               </div>
               <button
                 onClick={() => setErrorMessage('')}
-                className="text-red-600 hover:text-red-800"
+                className="text-red-600 hover:text-red-800 flex-shrink-0"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
