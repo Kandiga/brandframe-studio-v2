@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
   const inactiveLinkClasses = "text-gray-600 hover:bg-gray-100";
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col p-4 fixed h-full">
+    <aside className="hidden lg:flex w-64 bg-white border-r border-gray-200 flex flex-col p-4 fixed h-full">
       <div className="flex items-center gap-3 mb-10 px-2">
         <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white font-bold text-sm">
           BFS

@@ -1,6 +1,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
+import BottomNav from './components/BottomNav';
 import InputPanel from './components/InputPanel';
 import Dashboard from './components/Dashboard';
 import MyProjects from './components/MyProjects';
@@ -569,7 +570,7 @@ BOUNDARIES & LOGIC:
     <ErrorBoundary>
       <div className="bg-gray-50 min-h-screen flex text-gray-800">
         {errorMessage && (
-          <div className="fixed top-4 right-4 bg-red-50 border border-red-200 rounded-lg shadow-lg p-4 z-50 max-w-md">
+          <div className="fixed top-4 right-4 left-4 lg:left-auto bg-red-50 border border-red-200 rounded-lg shadow-lg p-4 z-50 w-full lg:max-w-md">
             <div className="flex items-start gap-3">
               <svg
                 className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
@@ -599,7 +600,7 @@ BOUNDARIES & LOGIC:
           </div>
         )}
         <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
-        <div className="flex-1 flex flex-col lg:flex-row ml-0 lg:ml-64">
+        <div className="flex-1 flex flex-col lg:flex-row ml-0 lg:ml-64 pb-20 lg:pb-0">
         {currentView === 'dashboard' ? (
           <>
             <InputPanel
@@ -646,6 +647,7 @@ BOUNDARIES & LOGIC:
           <ViralShortsView onVideoSelect={handleVideoSelect} />
         )}
         </div>
+        <BottomNav currentView={currentView} setCurrentView={setCurrentView} />
       </div>
     </ErrorBoundary>
   );

@@ -50,7 +50,7 @@ const InputPanel: React.FC<InputPanelProps> = memo(({
   characterFiles = [],
 }) => {
   return (
-    <aside className="w-full lg:w-[420px] bg-gray-50 border-r border-gray-200 p-6 flex-shrink-0">
+    <aside className="w-full lg:w-[420px] bg-gray-50 border-r border-gray-200 p-4 lg:p-6 flex-shrink-0">
       <div className="space-y-8">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 mb-6">1. Brand Assets & Story</h2>
@@ -172,7 +172,7 @@ const InputPanel: React.FC<InputPanelProps> = memo(({
 
         <div>
           <h3 className="text-lg font-bold text-gray-800 mb-3">Number of Frames</h3>
-          <div className="grid grid-cols-4 gap-2 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
             {[2, 4, 6, 8].map((count) => (
               <button
                 key={count}
@@ -230,7 +230,7 @@ const InputPanel: React.FC<InputPanelProps> = memo(({
             value={story}
             onChange={(e) => onStoryChange(e.target.value)}
             placeholder="e.g., A hero embarks on a quest to find a hidden treasure..."
-            className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow resize-none"
+            className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow resize-none text-base"
             disabled={isLoading}
           />
         </div>
@@ -238,7 +238,7 @@ const InputPanel: React.FC<InputPanelProps> = memo(({
         <button
           onClick={onGenerate}
           disabled={isLoading || !story}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed min-h-[44px]"
         >
           {isLoading ? (
             <>

@@ -39,18 +39,18 @@ const ProfessionalScriptView: React.FC<ProfessionalScriptViewProps> = ({ storybo
   ];
 
   return (
-    <div className="mt-8 max-w-none">
-      <div className="mb-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
-        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <LayerIcon className="w-6 h-6 text-indigo-600" />
-          Professional Screenplay: Master Screenplay Architect
+    <div className="mt-4 lg:mt-8 max-w-none">
+      <div className="mb-4 lg:mb-6 p-3 lg:p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
+        <h2 className="text-xl lg:text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <LayerIcon className="w-5 h-5 lg:w-6 lg:h-6 text-indigo-600" />
+          <span className="break-words">Professional Screenplay: Master Screenplay Architect</span>
         </h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-xs lg:text-sm text-gray-600 break-words">
           Level 9 Broadcast Quality - Master Screenplay Architect with 8-component tier hierarchy, Story-World Parameterization, and Plot-Algorithm mechanism.
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4 lg:space-y-6">
         {storyboard.scenes.map((scene) => {
           const isExpanded = expandedScene === scene.id;
 
@@ -58,25 +58,25 @@ const ProfessionalScriptView: React.FC<ProfessionalScriptViewProps> = ({ storybo
             <div key={scene.id} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
               {/* Scene Header */}
               <div
-                className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                className="p-4 lg:p-6 cursor-pointer hover:bg-gray-50 transition-colors min-h-[44px] flex items-center"
                 onClick={() => toggleScene(scene.id)}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-indigo-600">{scene.title}</h3>
-                    <p className="mt-2 text-lg text-gray-700 italic">"{scene.scriptLine}"</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <span className="text-xs font-semibold bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                <div className="flex items-start justify-between w-full">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg lg:text-xl font-bold text-indigo-600 break-words">{scene.title}</h3>
+                    <p className="mt-2 text-base lg:text-lg text-gray-700 italic break-words">"{scene.scriptLine}"</p>
+                    <div className="mt-3 lg:mt-4 flex flex-wrap gap-2">
+                      <span className="text-xs font-semibold bg-blue-100 text-blue-800 px-2 lg:px-3 py-1 rounded-full">
                         Emotion: {scene.emotion}
                       </span>
-                      <span className="text-xs font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                      <span className="text-xs font-semibold bg-green-100 text-green-800 px-2 lg:px-3 py-1 rounded-full">
                         Intent: {scene.intent}
                       </span>
                     </div>
                   </div>
-                  <button className="ml-4 text-gray-400 hover:text-gray-600">
+                  <button className="ml-4 text-gray-400 hover:text-gray-600 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center">
                     <svg
-                      className={`w-6 h-6 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                      className={`w-5 h-5 lg:w-6 lg:h-6 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -89,11 +89,11 @@ const ProfessionalScriptView: React.FC<ProfessionalScriptViewProps> = ({ storybo
 
               {/* 8-Component Tier Hierarchy - Expanded */}
               {isExpanded && (
-                <div className="border-t border-gray-200 bg-gray-50 p-6">
-                  <h4 className="text-sm font-bold text-gray-600 uppercase tracking-wide mb-4">
+                <div className="border-t border-gray-200 bg-gray-50 p-4 lg:p-6">
+                  <h4 className="text-xs lg:text-sm font-bold text-gray-600 uppercase tracking-wide mb-3 lg:mb-4">
                     8-Component Tier Hierarchy (Level 9 Broadcast Quality)
                   </h4>
-                  <div className="space-y-4">
+                  <div className="space-y-3 lg:space-y-4">
                     {tiers.map(tier => {
                       const value = scene[tier.key as keyof typeof scene];
                       // Handle backward compatibility - check both new and old field names
@@ -106,55 +106,57 @@ const ProfessionalScriptView: React.FC<ProfessionalScriptViewProps> = ({ storybo
                         else if (tier.key === 'cameraComposition' && scene.cinematography) displayValue = scene.cinematography;
                       }
                       return (
-                        <div key={tier.key} className={`p-4 rounded-lg border ${tier.color}`}>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-2xl">{tier.icon}</span>
-                            <h5 className={`font-bold ${tier.textColor}`}>
+                        <div key={tier.key} className={`p-3 lg:p-4 rounded-lg border ${tier.color}`}>
+                          <div className="flex items-start gap-2 mb-2">
+                            <span className="text-xl lg:text-2xl flex-shrink-0">{tier.icon}</span>
+                            <h5 className={`font-bold ${tier.textColor} text-sm lg:text-base break-words`}>
                               {tier.label}
                               {tier.tier === 1 && <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">CRITICAL</span>}
                             </h5>
                           </div>
-                          <p className="text-gray-700 whitespace-pre-wrap">{displayValue || 'Not specified'}</p>
+                          <p className="text-sm lg:text-base text-gray-700 whitespace-pre-wrap break-words">{displayValue || 'Not specified'}</p>
                         </div>
                       );
                     })}
 
                     {/* Veo 3.1 Prompt - Special Section */}
-                    <div className="p-4 rounded-lg border bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-300">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl">🎥</span>
-                        <h5 className="font-bold text-indigo-900">Veo 3.1 Comprehensive Prompt</h5>
-                        <span className="ml-2 text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">Optimized</span>
+                    <div className="p-3 lg:p-4 rounded-lg border bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-300">
+                      <div className="flex items-start gap-2 mb-2">
+                        <span className="text-xl lg:text-2xl flex-shrink-0">🎥</span>
+                        <h5 className="font-bold text-indigo-900 text-sm lg:text-base break-words">Veo 3.1 Comprehensive Prompt</h5>
+                        <span className="ml-2 text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded flex-shrink-0">Optimized</span>
                       </div>
-                      <p className="text-gray-700 text-sm font-mono whitespace-pre-wrap bg-white p-3 rounded border border-indigo-200">
-                        {scene.veoPrompt}
-                      </p>
-                      <p className="mt-2 text-xs text-gray-500 italic">
+                      <div className="overflow-x-auto">
+                        <p className="text-gray-700 text-xs lg:text-sm font-mono whitespace-pre-wrap bg-white p-2 lg:p-3 rounded border border-indigo-200 break-words">
+                          {scene.veoPrompt}
+                        </p>
+                      </div>
+                      <p className="mt-2 text-xs text-gray-500 italic break-words">
                         Includes "(thats where the camera is)" positioning syntax for Veo 3.1 optimization
                       </p>
                     </div>
 
                     {/* Optional: Three-Layer Architecture Display */}
                     {(scene.deepStructure || scene.intermediateStructure || scene.surfaceStructure) && (
-                      <div className="p-4 rounded-lg border bg-gradient-to-r from-slate-50 to-gray-50 border-slate-300 mt-4">
-                        <h5 className="font-bold text-slate-900 mb-3">Three-Layer Architecture</h5>
-                        <div className="space-y-2 text-sm">
+                      <div className="p-3 lg:p-4 rounded-lg border bg-gradient-to-r from-slate-50 to-gray-50 border-slate-300 mt-4">
+                        <h5 className="font-bold text-slate-900 mb-2 lg:mb-3 text-sm lg:text-base">Three-Layer Architecture</h5>
+                        <div className="space-y-2 text-xs lg:text-sm">
                           {scene.deepStructure && (
                             <div>
                               <span className="font-semibold text-slate-700">[DS] Deep Structure:</span>
-                              <p className="text-gray-600 ml-4">{scene.deepStructure}</p>
+                              <p className="text-gray-600 ml-2 lg:ml-4 break-words">{scene.deepStructure}</p>
                             </div>
                           )}
                           {scene.intermediateStructure && (
                             <div>
                               <span className="font-semibold text-slate-700">[IS] Intermediate Structure:</span>
-                              <p className="text-gray-600 ml-4">{scene.intermediateStructure}</p>
+                              <p className="text-gray-600 ml-2 lg:ml-4 break-words">{scene.intermediateStructure}</p>
                             </div>
                           )}
                           {scene.surfaceStructure && (
                             <div>
                               <span className="font-semibold text-slate-700">[SS] Surface Structure:</span>
-                              <p className="text-gray-600 ml-4">{scene.surfaceStructure}</p>
+                              <p className="text-gray-600 ml-2 lg:ml-4 break-words">{scene.surfaceStructure}</p>
                             </div>
                           )}
                         </div>
@@ -169,9 +171,9 @@ const ProfessionalScriptView: React.FC<ProfessionalScriptViewProps> = ({ storybo
       </div>
 
       {/* Legend */}
-      <div className="mt-8 p-4 bg-gray-100 rounded-lg">
-        <h4 className="text-sm font-bold text-gray-700 mb-3">Level 9 Master Screenplay Architect Methodology</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs text-gray-600">
+      <div className="mt-6 lg:mt-8 p-3 lg:p-4 bg-gray-100 rounded-lg">
+        <h4 className="text-xs lg:text-sm font-bold text-gray-700 mb-2 lg:mb-3">Level 9 Master Screenplay Architect Methodology</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-3 text-xs text-gray-600">
           <div>
             <strong>Story-World [SW]:</strong> Parameterization with Deep/Intermediate Structure
           </div>

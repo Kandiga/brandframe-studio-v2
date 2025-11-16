@@ -43,16 +43,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onSelect }) => {
           </div>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem]">
+      <div className="p-3 lg:p-4">
+        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem] text-sm sm:text-base">
           {video.title}
         </h3>
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2 min-h-[2.5rem]">
+        <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2 min-h-[2.5rem]">
           {video.description || 'No description available'}
         </p>
-        <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+        <div className="flex items-center justify-between text-xs text-gray-500 mb-3 flex-wrap gap-1">
           <span className="font-medium">{video.channelName}</span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <span>{formatNumber(video.viewCount)} views</span>
             {video.likeCount > 0 && (
               <span>{formatNumber(video.likeCount)} likes</span>
@@ -72,16 +72,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onSelect }) => {
             </div>
           </div>
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors text-xs sm:text-sm min-h-[44px]"
           >
             View Details
           </button>
           <button
             onClick={() => onSelect(video)}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-xs sm:text-sm min-h-[44px]"
           >
             Use as Inspiration
           </button>

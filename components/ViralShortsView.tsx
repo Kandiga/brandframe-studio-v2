@@ -95,12 +95,12 @@ const ViralShortsView: React.FC<ViralShortsViewProps> = ({ onVideoSelect }) => {
   };
 
   return (
-    <div className="flex-1 p-8 overflow-y-auto">
+    <div className="flex-1 p-4 lg:p-8 overflow-y-auto">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 mb-6 lg:mb-8">
           <div className="flex-1">
-            <h1 className="text-4xl font-extrabold text-gray-900">Viral Shorts</h1>
-            <p className="mt-2 text-lg text-gray-600">
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900">Viral Shorts</h1>
+            <p className="mt-2 text-base lg:text-lg text-gray-600">
               Browse trending YouTube Shorts and use them as inspiration for your storyboard.
             </p>
             {activeQuery && (
@@ -134,12 +134,12 @@ const ViralShortsView: React.FC<ViralShortsViewProps> = ({ onVideoSelect }) => {
               <h2 className="text-sm font-semibold text-gray-700">Recent Searches:</h2>
               <button
                 onClick={() => setSearchHistory([])}
-                className="text-xs text-gray-500 hover:text-gray-700"
+                className="text-xs text-gray-500 hover:text-gray-700 min-h-[44px] px-2"
               >
                 Clear History
               </button>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 lg:pb-0">
               {searchHistory.map((search) => (
                 <button
                   key={`${search.query}-${search.timestamp}`}
@@ -168,7 +168,7 @@ const ViralShortsView: React.FC<ViralShortsViewProps> = ({ onVideoSelect }) => {
           </div>
         )}
 
-        <div className="mb-6 flex gap-3">
+        <div className="mb-6 flex flex-col sm:flex-row gap-3">
           <div className="flex-1 relative">
             <input
               type="text"
@@ -176,7 +176,7 @@ const ViralShortsView: React.FC<ViralShortsViewProps> = ({ onVideoSelect }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Search for viral shorts by topic (e.g., cooking, fitness, comedy)..."
-              className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-500 text-base"
             />
             <svg
               className="absolute left-3 top-3.5 w-5 h-5 text-gray-400"
@@ -196,7 +196,7 @@ const ViralShortsView: React.FC<ViralShortsViewProps> = ({ onVideoSelect }) => {
           <button
             onClick={handleSearch}
             disabled={isLoading}
-            className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg shadow-sm inline-flex items-center gap-2 transition-colors"
+            className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg shadow-sm inline-flex items-center justify-center gap-2 transition-colors min-h-[44px] w-full sm:w-auto"
           >
             <svg
               className="w-5 h-5"

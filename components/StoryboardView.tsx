@@ -108,10 +108,10 @@ const FrameCard: React.FC<{ frame: Frame; sceneTitle: string; sceneId: number; a
             )}
             {/* Download button overlay */}
             {!imageError && !isValidating && (
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden md:block">
                 <button
                   onClick={handleDownload}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-lg shadow-lg transition-colors flex items-center gap-1"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-lg shadow-lg transition-colors flex items-center gap-1 min-h-[44px] min-w-[44px]"
                   title={`Download Frame ${frame.variant}`}
                 >
                   <DownloadIcon className="w-4 h-4" />
@@ -121,14 +121,14 @@ const FrameCard: React.FC<{ frame: Frame; sceneTitle: string; sceneId: number; a
             )}
         </div>
         <div className="flex items-center justify-between mt-2">
-          <p className="text-center text-sm text-gray-600 font-medium flex-1">{`${sceneTitle}: Frame ${frame.variant}`}</p>
+          <p className="text-center text-xs lg:text-sm text-gray-600 font-medium flex-1">{`${sceneTitle}: Frame ${frame.variant}`}</p>
           {!imageError && (
             <button
               onClick={handleDownload}
-              className="ml-2 text-indigo-600 hover:text-indigo-700 p-1 rounded transition-colors md:hidden"
+              className="ml-2 text-indigo-600 hover:text-indigo-700 p-2 rounded transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               title={`Download Frame ${frame.variant}`}
             >
-              <DownloadIcon className="w-4 h-4" />
+              <DownloadIcon className="w-5 h-5" />
             </button>
           )}
         </div>
@@ -145,14 +145,14 @@ const Scene: React.FC<{ scene: SceneType; aspectRatio?: '16:9' | '9:16' }> = ({ 
 );
 
 const Timeline: React.FC<{ scenes: SceneType[] }> = ({ scenes }) => (
-    <div className="relative mb-12">
+    <div className="relative mb-8 lg:mb-12">
         <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2"></div>
         <div className="absolute top-1/2 left-0 w-full h-0.5 bg-indigo-500 -translate-y-1/2" style={{ width: '100%' }}></div>
         <div className="relative flex justify-between items-center">
             {scenes.map((scene) => (
                 <div key={scene.id} className="flex flex-col items-center">
-                    <div className="w-4 h-4 bg-indigo-600 rounded-full border-2 border-white shadow-sm z-10"></div>
-                    <p className="mt-2 text-sm font-semibold text-gray-700">{scene.title}</p>
+                    <div className="w-3 h-3 lg:w-4 lg:h-4 bg-indigo-600 rounded-full border-2 border-white shadow-sm z-10"></div>
+                    <p className="mt-1 lg:mt-2 text-xs lg:text-sm font-semibold text-gray-700 text-center px-1">{scene.title}</p>
                 </div>
             ))}
         </div>
@@ -184,10 +184,10 @@ const StoryboardView: React.FC<StoryboardViewProps> = ({ storyboard, onContinueN
     const lastScene = storyboard.scenes[storyboard.scenes.length - 1];
 
     return (
-        <div className="mt-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">2. Generated Storyboard</h2>
+        <div className="mt-4 lg:mt-8">
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-4 lg:mb-6">2. Generated Storyboard</h2>
             <Timeline scenes={storyboard.scenes} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
                 {storyboard.scenes.map((scene) => (
                     <Scene key={scene.id} scene={scene} aspectRatio={storyboard.aspectRatio} />
                 ))}
@@ -195,13 +195,13 @@ const StoryboardView: React.FC<StoryboardViewProps> = ({ storyboard, onContinueN
             
             {/* Continue Narrative Button */}
             {onContinueNarrative && (
-                <div className="mt-12 pt-8 border-t border-gray-200">
+                <div className="mt-8 lg:mt-12 pt-6 lg:pt-8 border-t border-gray-200">
                     {!showContinueOptions ? (
                         <div className="flex flex-col items-center gap-4">
                             <button
                                 onClick={() => setShowContinueOptions(true)}
                                 disabled={isContinuing}
-                                className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors inline-flex items-center gap-2"
+                                className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 lg:px-6 rounded-lg shadow-md transition-colors inline-flex items-center gap-2 min-h-[44px] text-sm lg:text-base"
                             >
                                 {isContinuing ? (
                                     <>
@@ -225,8 +225,8 @@ const StoryboardView: React.FC<StoryboardViewProps> = ({ storyboard, onContinueN
                             </p>
                         </div>
                     ) : (
-                        <div className="max-w-2xl mx-auto bg-gray-50 p-6 rounded-lg border border-gray-200">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Continue Narrative</h3>
+                        <div className="max-w-2xl mx-auto bg-gray-50 p-4 lg:p-6 rounded-lg border border-gray-200">
+                            <h3 className="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Continue Narrative</h3>
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -236,15 +236,15 @@ const StoryboardView: React.FC<StoryboardViewProps> = ({ storyboard, onContinueN
                                         value={customInstruction}
                                         onChange={(e) => setCustomInstruction(e.target.value)}
                                         placeholder="e.g., 'The character discovers a hidden door' or leave empty for automatic continuation"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-base"
                                         rows={3}
                                     />
                                 </div>
-                                <div className="flex gap-3">
+                                <div className="flex flex-col sm:flex-row gap-3">
                                     <button
                                         onClick={handleContinueClick}
                                         disabled={isContinuing}
-                                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition-colors min-h-[44px] text-sm lg:text-base"
                                     >
                                         {isContinuing ? 'Generating...' : 'Generate 2 More Frames'}
                                     </button>
@@ -254,7 +254,7 @@ const StoryboardView: React.FC<StoryboardViewProps> = ({ storyboard, onContinueN
                                             setCustomInstruction('');
                                         }}
                                         disabled={isContinuing}
-                                        className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] text-sm lg:text-base"
                                     >
                                         Cancel
                                     </button>

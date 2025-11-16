@@ -19,3 +19,52 @@ body {
   min-height: 100vh;
 }
 
+/* Mobile-specific styles */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Ensure no horizontal scrolling on mobile */
+* {
+  max-width: 100%;
+}
+
+/* Safe area support for devices with home indicators */
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-top {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+}
+
+/* Touch-friendly tap targets */
+button, a, input, textarea, select {
+  -webkit-tap-highlight-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Prevent text size adjustment on iOS */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
