@@ -6,13 +6,81 @@ import { ApplicationError } from '../../server/middleware/errorHandler.js';
 import { storyboardGenerationSchema } from '../../server/middleware/validation.js';
 import { logInfo, logError, logDebug } from '../../server/utils/logger.js';
 
+// Helper function to check if origin is a WebContainer domain
+const isWebContainerDomain = (origin: string): boolean => {
+  return origin.includes('.webcontainer-api.io') ||
+         origin.includes('.local-credentialless.webcontainer-api.io');
+};
+
+// Helper function to check if origin is a Netlify domain
+const isNetlifyDomain = (origin: string): boolean => {
+  return origin.endsWith('.netlify.app') || origin.includes('.netlify.app');
+};
+
+// Helper function to check if origin is a localhost domain
+const isLocalhostDomain = (origin: string): boolean => {
+  return origin.includes('localhost') || origin.includes('127.0.0.1');
+};
+
+// Helper function to check if origin is allowed
+const isOriginAllowed = (origin: string): boolean => {
+  // Allow WebContainer domains (development environments)
+  if (isWebContainerDomain(origin)) {
+    logDebug('WebContainer domain detected', {
+      category: 'CORS',
+      origin,
+    });
+    return true;
+  }
+
+  // Allow Netlify domains (production and preview)
+  if (isNetlifyDomain(origin)) {
+    return true;
+  }
+
+  // Allow localhost in development
+  if (isLocalhostDomain(origin)) {
+    return true;
+  }
+
+  // Allow explicitly configured frontend URL
+  const frontendUrl = process.env.FRONTEND_URL;
+  if (frontendUrl && origin === frontendUrl) {
+    return true;
+  }
+
+  // Allow additional origins from environment variable (comma-separated)
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || [];
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  return false;
+};
+
 // CORS headers helper
-const getCorsHeaders = (origin?: string) => ({
-  'Access-Control-Allow-Origin': origin || '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Credentials': 'true',
-});
+const getCorsHeaders = (origin?: string) => {
+  // If no origin is provided, allow all (for requests without origin like mobile apps)
+  if (!origin) {
+    return {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Max-Age': '86400', // 24 hours
+    };
+  }
+
+  // Check if origin is allowed
+  const allowed = isOriginAllowed(origin);
+
+  return {
+    'Access-Control-Allow-Origin': allowed ? origin : 'null',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Max-Age': '86400', // 24 hours
+  };
+};
 
 // Handle CORS preflight
 const handleCORS = (event: HandlerEvent) => {
