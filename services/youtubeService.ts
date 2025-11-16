@@ -1,7 +1,8 @@
 import { YouTubeVideo, Comment } from '../types';
 import { logInfo, logError, logDebug, logWarn } from '../utils/logger.js';
+import { API_CONFIG } from '../constants/index.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+const API_BASE_URL = API_CONFIG.BASE_URL;
 
 async function checkBackendHealth(): Promise<boolean> {
   return true;

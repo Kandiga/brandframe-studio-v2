@@ -3,8 +3,30 @@
  */
 
 // API Configuration
+const getApiBaseUrl = (): string => {
+  // If VITE_API_URL is explicitly set, use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // In WebContainer environment (bolt.new), detect the backend URL
+  if (typeof window !== 'undefined') {
+    const currentUrl = window.location.origin;
+
+    // Check if we're in a WebContainer environment
+    if (currentUrl.includes('webcontainer-api.io') || currentUrl.includes('local-credentialless')) {
+      // Replace port 3000 with 3002 for backend
+      const backendUrl = currentUrl.replace(/--3000--/, '--3002--').replace(/:3000/, ':3002');
+      return backendUrl;
+    }
+  }
+
+  // Default fallback
+  return 'http://localhost:3002';
+};
+
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:3002',
+  BASE_URL: getApiBaseUrl(),
   TIMEOUT: 300000, // 5 minutes (300 seconds) - Story generation takes ~2-3 minutes
   RETRY_ATTEMPTS: 3,
 } as const;
